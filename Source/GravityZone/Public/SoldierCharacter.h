@@ -9,24 +9,27 @@
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+struct FInputActionValue;
 
-UCLASS()
+UCLASS(config=Game)
 class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* FPCamera{ nullptr };
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UInputMappingContext* InputMap;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputMappingContext* InputMap{ nullptr };
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UInputAction* MoveAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MoveAction{ nullptr };
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UInputAction* JumpAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* JumpAction{ nullptr };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction{ nullptr };
 
 public:
 	// Sets default values for this character's properties
@@ -35,6 +38,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void Move(const FInputActionValue& Value);
+
+	void Look(const FInputActionValue& Value);
 
 public:	
 	// Called every frame

@@ -9,7 +9,8 @@ public class GravityZoneEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V4;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
-		ExtraModuleNames.Add("GravityZone");
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_5;
+        DefaultBuildSettings = BuildSettingsVersion.V5;
+        ExtraModuleNames.Add("GravityZone");
 	}
 }

@@ -14,7 +14,7 @@ ASoldierCharacter::ASoldierCharacter()
 
 	FPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPSCamera"));
 	FPCamera->SetupAttachment(GetCapsuleComponent());
-	FPCamera->bUsePawnControlRotation = true;
+	FPCamera->bUsePawnControlRotation = false;
 }
 
 void ASoldierCharacter::BeginPlay()

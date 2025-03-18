@@ -3,6 +3,8 @@
 
 #include "GravityControllerComponent.h"
 #include "SoldierCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values for this component's properties
 UGravityControllerComponent::UGravityControllerComponent()
@@ -20,7 +22,7 @@ void UGravityControllerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = Cast<ASoldierCharacter>(GetOwner());
+	PlayerCharacter = Cast<ASoldierCharacter>(GetOwner());
 }
 
 // Called every frame
@@ -31,9 +33,6 @@ void UGravityControllerComponent::TickComponent(float DeltaTime, ELevelTick Tick
 	// ...
 }
 
-/*
-* Given a FVector, returns the closest axis to the vector. Assumes normalized vector.
-*/
 FVector UGravityControllerComponent::GetVectorAlignedToAxis(const FVector& OriginalVector)
 {
 	// X axis
@@ -59,7 +58,7 @@ FVector UGravityControllerComponent::GetVectorAlignedToAxis(const FVector& Origi
 
 void UGravityControllerComponent::RotateGravityHorizontally(float Angle)
 {
-	FVector ForwardAxis = GetVectorAlignedToAxis(Player->GetActorForwardVector());
+	FVector ForwardAxis = GetVectorAlignedToAxis(PlayerCharacter->GetActorForwardVector());
 	FVector NewDirection = TargetGravityDirection.RotateAngleAxis(Angle, ForwardAxis);
 
 	ChangeGravityDirection(NewDirection);
@@ -67,7 +66,7 @@ void UGravityControllerComponent::RotateGravityHorizontally(float Angle)
 
 void UGravityControllerComponent::RotateGravityVertically(float Angle)
 {
-	FVector ForwardAxis = GetVectorAlignedToAxis(Player->GetActorRightVector());
+	FVector ForwardAxis = GetVectorAlignedToAxis(PlayerCharacter->GetActorRightVector());
 	FVector NewDirection = TargetGravityDirection.RotateAngleAxis(Angle, ForwardAxis);
 
 	ChangeGravityDirection(NewDirection);
@@ -97,4 +96,69 @@ void UGravityControllerComponent::ChangeGravityDirection(const FVector& NewDirec
 {
 	TargetGravityDirection = NewDirection;
 	bIsInterpolatingGravity = true;
+
+	CacheCameraTargetDistance();
+	bShouldCameraFollowTarget = true;
+}
+
+void UGravityControllerComponent::InterpolateToTargetGravityDirection(float InterpolationAlpha)
+{
+	if (!bIsInterpolatingGravity) return;
+
+	FVector CameraTargetPosition{ FVector::ZeroVector };
+	if (bShouldCameraFollowTarget) {
+		UCameraComponent* PlayerCamera{ PlayerCharacter->GetCamera() };
+		CameraTargetPosition = PlayerCamera->GetComponentLocation() + PlayerCamera->GetForwardVector() * CachedCameraTargetDistance;
+	}
+
+	UCharacterMovementComponent* CharacterMovement{ PlayerCharacter->GetCharacterMovement() };
+	FVector PreviousGravityDirection{ CharacterMovement->GetGravityDirection() };
+	FVector InterpolatedGravityDirection {TargetGravityDirection};
+
+	if (PreviousGravityDirection.Equals(TargetGravityDirection, 0.01)) {
+		bIsInterpolatingGravity = false;
+	}
+	else {
+		InterpolatedGravityDirection = FVector::SlerpNormals(PreviousGravityDirection, TargetGravityDirection, InterpolationAlpha);
+	}
+
+	CharacterMovement->SetGravityDirection(InterpolatedGravityDirection);
+	PlayerCharacter->AddActorWorldRotation(FQuat::FindBetweenNormals(PreviousGravityDirection, InterpolatedGravityDirection));
+
+	if (bShouldCameraFollowTarget) {
+		RotateToPosition(CameraTargetPosition);
+	}
+}
+
+void UGravityControllerComponent::CacheCameraTargetDistance()
+{
+	constexpr float MinTargetDistance{ 300 };
+	constexpr float MaxTargetDistance{ 10000 };
+
+	FHitResult HitResult;
+	UCameraComponent* PlayerCamera{ PlayerCharacter->GetCamera() };
+	FVector LineTraceEndPoint{ PlayerCamera->GetComponentLocation() + PlayerCamera->GetForwardVector() * MaxTargetDistance };
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, PlayerCamera->GetComponentLocation(), LineTraceEndPoint, ECollisionChannel::ECC_Visibility)) {
+		CachedCameraTargetDistance = FMath::Max(MinTargetDistance, HitResult.Distance);
+	}
+	else {
+		CachedCameraTargetDistance = MaxTargetDistance;
+	}
+}
+
+void UGravityControllerComponent::RotateToPosition(const FVector& TargetPosition)
+{
+	UCameraComponent* PlayerCamera{ PlayerCharacter->GetCamera() };
+	FVector LookDirection{ (TargetPosition - PlayerCamera->GetComponentLocation()) };
+	LookDirection.Normalize();
+
+	// Converts from world-space to character's local-space coordinates
+	LookDirection = PlayerCharacter->GetTransform().InverseTransformVector(LookDirection);
+
+	FRotator TargetRotation{ FQuat::FindBetweenNormals(FVector::XAxisVector, LookDirection).Rotator()};
+	FRotator AddedRotation{ (TargetRotation - PlayerCamera->GetRelativeRotation()).GetNormalized()};
+	
+	PlayerCharacter->AddActorLocalRotation(FRotator(0, AddedRotation.Yaw, 0));
+	PlayerCamera->AddRelativeRotation(FRotator(AddedRotation.Pitch, 0, 0));
 }

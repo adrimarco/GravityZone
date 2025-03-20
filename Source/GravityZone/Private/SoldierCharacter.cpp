@@ -24,6 +24,22 @@ void ASoldierCharacter::BeginPlay()
 	
 }
 
+float ASoldierCharacter::GetPitchOffsetClampedToCameraLimit(float AddedPitch) const
+{
+	constexpr float MinCameraPitch{-80};
+	constexpr float MaxCameraPitch{80};
+
+	float CurrentCameraPicth = FPCamera->GetRelativeRotation().Pitch;
+	float NewCameraPitch{ CurrentCameraPicth + AddedPitch };
+
+	if (NewCameraPitch > MaxCameraPitch)
+		return MaxCameraPitch - CurrentCameraPicth;
+	else if (NewCameraPitch < MinCameraPitch)
+		return MinCameraPitch - CurrentCameraPicth;
+
+	return AddedPitch;
+}
+
 void ASoldierCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -47,7 +63,7 @@ void ASoldierCharacter::Look(const FInputActionValue& Value)
 
 	// Yaw rotation is applied to actor while camera only rotates with Pitch
 	AddActorLocalRotation(FRotator{ 0, LookAxisVector.X, 0 });
-	FPCamera->AddLocalRotation(FRotator{ LookAxisVector.Y, 0, 0 });
+	FPCamera->AddLocalRotation(FRotator{ GetPitchOffsetClampedToCameraLimit(LookAxisVector.Y), 0, 0 });
 }
 
 // Called to bind functionality to input

@@ -43,6 +43,11 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 
+	// Takes a float representing the pitch offset to be applied to the camera's rotation.
+	// Returns the adjusted value needed to avoid exceeding the camera rotation limits.
+	// If the AddedPitch does not exceed the defined limits, the original value is returned.
+	float GetPitchOffsetClampedToCameraLimit(float AddedPitch) const;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

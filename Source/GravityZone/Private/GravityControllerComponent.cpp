@@ -5,6 +5,7 @@
 #include "SoldierCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "EnhancedInputComponent.h"
 
 // Sets default values for this component's properties
 UGravityControllerComponent::UGravityControllerComponent()
@@ -23,14 +24,30 @@ void UGravityControllerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerCharacter = Cast<ASoldierCharacter>(GetOwner());
+	BindInputActions(PlayerCharacter->InputComponent);
+}
+
+void UGravityControllerComponent::BindInputActions(UInputComponent* PlayerInputComponent)
+{
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("StartBinding"));
+		// Gravity rotation actions
+		EnhancedInputComponent->BindAction(RotateGravityRightAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityRight);
+		EnhancedInputComponent->BindAction(RotateGravityLeftAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityLeft);
+		EnhancedInputComponent->BindAction(RotateGravityForwardAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityForward);
+		EnhancedInputComponent->BindAction(RotateGravityBackwardAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityBackward);
+		UE_LOG(LogTemp, Warning, TEXT("FinishBinding"));
+	}
 }
 
 // Called every frame
 void UGravityControllerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	constexpr float InterpolationSpeed{ 5 };
 
-	// ...
+	InterpolateToTargetGravityDirection(DeltaTime * InterpolationSpeed);
 }
 
 FVector UGravityControllerComponent::GetVectorAlignedToAxis(const FVector& OriginalVector)

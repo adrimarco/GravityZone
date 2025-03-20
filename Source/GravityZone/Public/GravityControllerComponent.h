@@ -7,6 +7,7 @@
 #include "GravityControllerComponent.generated.h"
 
 class ASoldierCharacter;
+class UInputAction;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
 class GRAVITYZONE_API UGravityControllerComponent : public UActorComponent
@@ -15,20 +16,36 @@ class GRAVITYZONE_API UGravityControllerComponent : public UActorComponent
 
 protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	FVector TargetGravityDirection{ FVector::DownVector };
-
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	ASoldierCharacter* PlayerCharacter{ nullptr };
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Gravity")
+	FVector TargetGravityDirection{ FVector::DownVector };
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Gravity")
 	bool bIsInterpolatingGravity{ false };
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Camera target")
 	bool bShouldCameraFollowTarget{ false };
 
 	/* Caches the distance to a detected collision point. Assumes the value remains relatively stable. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Camera target")
 	float CachedCameraTargetDistance{ 0 };
+
+	/*
+	** Input Actions
+	*/
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
+	UInputAction* RotateGravityRightAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
+	UInputAction* RotateGravityLeftAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
+	UInputAction* RotateGravityForwardAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
+	UInputAction* RotateGravityBackwardAction{ nullptr };
 
 public:	
 	// Sets default values for this component's properties
@@ -37,6 +54,9 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Category = "Input")
+	void BindInputActions(UInputComponent* PlayerInputComponent);
 
 	/* Rotates gravity around character's forward axis */
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")

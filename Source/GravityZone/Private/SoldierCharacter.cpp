@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASoldierCharacter::ASoldierCharacter()
@@ -42,13 +43,11 @@ void ASoldierCharacter::Move(const FInputActionValue& Value)
 
 void ASoldierCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	FVector2D LookAxisVector{ Value.Get<FVector2D>() };
 
-	if (Controller != nullptr)
-	{
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
-	}
+	// Yaw rotation is applied to actor while camera only rotates with Pitch
+	AddActorLocalRotation(FRotator{ 0, LookAxisVector.X, 0 });
+	FPCamera->AddLocalRotation(FRotator{ LookAxisVector.Y, 0, 0 });
 }
 
 // Called to bind functionality to input

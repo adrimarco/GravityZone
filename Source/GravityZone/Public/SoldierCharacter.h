@@ -55,6 +55,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/* Returns character's attached camera */
+	// Returns character's attached camera.
 	UCameraComponent* GetCamera() const { return FPCamera; }
 };

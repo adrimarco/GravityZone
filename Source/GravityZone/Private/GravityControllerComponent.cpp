@@ -31,13 +31,11 @@ void UGravityControllerComponent::BindInputActions(UInputComponent* PlayerInputC
 {
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StartBinding"));
 		// Gravity rotation actions
 		EnhancedInputComponent->BindAction(RotateGravityRightAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityRight);
 		EnhancedInputComponent->BindAction(RotateGravityLeftAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityLeft);
 		EnhancedInputComponent->BindAction(RotateGravityForwardAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityForward);
 		EnhancedInputComponent->BindAction(RotateGravityBackwardAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityBackward);
-		UE_LOG(LogTemp, Warning, TEXT("FinishBinding"));
 	}
 }
 
@@ -156,6 +154,7 @@ void UGravityControllerComponent::CacheCameraTargetDistance()
 	UCameraComponent* PlayerCamera{ PlayerCharacter->GetCamera() };
 	FVector LineTraceEndPoint{ PlayerCamera->GetComponentLocation() + PlayerCamera->GetForwardVector() * MaxTargetDistance };
 
+	// If raycast hits an object, saves the distance to the object
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, PlayerCamera->GetComponentLocation(), LineTraceEndPoint, ECollisionChannel::ECC_Visibility)) {
 		CachedCameraTargetDistance = FMath::Max(MinTargetDistance, HitResult.Distance);
 	}

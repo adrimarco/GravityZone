@@ -27,7 +27,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Camera target")
 	bool bShouldCameraFollowTarget{ false };
 
-	/* Caches the distance to a detected collision point. Assumes the value remains relatively stable. */
+	// Caches the distance to a detected collision point. Assumes the value remains relatively stable.
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Camera target")
 	float CachedCameraTargetDistance{ 0 };
 
@@ -58,11 +58,11 @@ protected:
 	UFUNCTION(Category = "Input")
 	void BindInputActions(UInputComponent* PlayerInputComponent);
 
-	/* Rotates gravity around character's forward axis */
+	// Rotates gravity around character's forward axis
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void RotateGravityHorizontally(float Angle);
 	
-	/* Rotates gravity around character's right axis */
+	// Rotates gravity around character's right axis
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void RotateGravityVertically(float Angle);
 
@@ -78,27 +78,25 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void RotateGravityBackward();
 
-	/* Updates TargetGravityDirection and enables gravity's direction interpolation */
+	// Updates TargetGravityDirection and enables gravity's direction interpolation.
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void ChangeGravityDirection(const FVector& NewDirection);
 
-	/* Gradually updates the current gravity direction to match TargetGravityDirection.
-	*  Also rotates the character to align with the updated gravity direction.
-	*/
+	// Gradually updates the current gravity direction to match TargetGravityDirection.
+	// Also rotates the character to align with the updated gravity direction.
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void InterpolateToTargetGravityDirection(float InterpolationAlpha);
 
-	/* Performs a raycast from the camera and stores the distance to the collision directly in front of it. */
+	// Performs a raycast from the camera and stores the distance to the closest object in front of it.
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void CacheCameraTargetDistance();
 
-	/* Rotates character and camera to face the TargetPosition */
+	// Rotates character and camera to face the TargetPosition.
 	UFUNCTION(BlueprintCallable, Category = "Camera")
 	void RotateToPosition(const FVector& TargetPosition);
 
-	/* Takes a normalized FVector and returns the closest cardinal axis to it.
-	*  Assumes the input vector is already normalized.
-	*/
+	// Takes a normalized FVector and returns the closest cardinal axis to it.
+	// Assumes the input vector is already normalized.
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Utility")
 	static FVector GetVectorAlignedToAxis(const FVector& OriginalVector);
 

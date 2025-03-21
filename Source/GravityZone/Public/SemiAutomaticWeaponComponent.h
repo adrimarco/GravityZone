@@ -8,7 +8,7 @@
 #include "SemiAutomaticWeaponComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable )
 class GRAVITYZONE_API USemiAutomaticWeaponComponent : public UWeaponComponent
 {
 	GENERATED_BODY()

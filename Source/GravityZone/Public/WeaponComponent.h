@@ -8,7 +8,7 @@
 
 
 UCLASS(Abstract, ClassGroup=(Custom) )
-class GRAVITYZONE_API UWeaponComponent : public USceneComponent
+class GRAVITYZONE_API UWeaponComponent : public USkeletalMeshComponent
 {
 	GENERATED_BODY()
 
@@ -51,6 +51,13 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	void ShotBullet();
+
+	// Performs a raycast to return the actor that would be hit by a shot.
+	// ImpactLocation is updated with the impact position of the bullet in world space.
+	// Returns nullptr if no actor is hit.
+	AActor* GetShotHitActor(FVector& ImpactLocation) const;
 
 public:	
 	// Called every frame

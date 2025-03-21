@@ -34,6 +34,7 @@ void USemiAutomaticWeaponComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 void USemiAutomaticWeaponComponent::StartFiring()
 {
+	ShotBullet();
 }
 
 void USemiAutomaticWeaponComponent::StopFiring()

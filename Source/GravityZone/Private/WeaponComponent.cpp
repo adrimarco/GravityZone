@@ -38,6 +38,33 @@ void UWeaponComponent::ResetWeaponAmmo()
 	ReserveAmmo = MaxReserveAmmo / 2;
 }
 
+void UWeaponComponent::ShotBullet()
+{
+	FVector ImpactLocation;
+	if (AActor* HitActor = GetShotHitActor(ImpactLocation)) {
+		UE_LOG(LogTemp, Warning, TEXT("Actor shot: %s at %f/%f/%f"), *HitActor->GetName(), ImpactLocation.X, ImpactLocation.Y, ImpactLocation.Z);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("No actor hit: %f/%f/%f"), ImpactLocation.X, ImpactLocation.Y, ImpactLocation.Z);
+	}
+}
+
+AActor* UWeaponComponent::GetShotHitActor(FVector& ImpactLocation) const
+{
+	FHitResult HitResult;
+	FVector LineTraceStartPoint{ GetAttachParent()->GetComponentLocation()};
+	FVector LineTraceEndPoint{ LineTraceStartPoint + GetAttachParent()->GetForwardVector() * 20000 };
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, LineTraceStartPoint, LineTraceEndPoint, ECollisionChannel::ECC_Visibility)) {
+		ImpactLocation = HitResult.ImpactPoint;
+		return HitResult.GetActor();
+	}
+	
+	// No object hit
+	ImpactLocation = LineTraceEndPoint;
+	return nullptr;
+}
+
 void UWeaponComponent::StartFiring()
 {
 }

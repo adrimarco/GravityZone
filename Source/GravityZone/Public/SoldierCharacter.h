@@ -9,6 +9,8 @@
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class UGravityControllerComponent;
+class UWeaponComponent;
 struct FInputActionValue;
 
 UCLASS(config=Game)
@@ -19,17 +21,42 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FPCamera{ nullptr };
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UGravityControllerComponent* GravityController{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UWeaponComponent* EquipedWeapon{ nullptr };
+
+	/*
+	** Input Actions
+	*/
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* InputMap{ nullptr };
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction{ nullptr };
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* JumpAction{ nullptr };
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ShotAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* RotateGravityRightAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* RotateGravityLeftAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* RotateGravityForwardAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* RotateGravityBackwardAction{ nullptr };
 
 public:
 	// Sets default values for this character's properties
@@ -47,6 +74,9 @@ protected:
 	// Returns the adjusted value needed to avoid exceeding the camera rotation limits.
 	// If the AddedPitch does not exceed the defined limits, the original value is returned.
 	float GetPitchOffsetClampedToCameraLimit(float AddedPitch) const;
+
+	void FireWeapon();
+	void StopFiringWeapon();
 
 public:	
 	// Called every frame

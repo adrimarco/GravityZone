@@ -24,20 +24,8 @@ void UGravityControllerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerCharacter = Cast<ASoldierCharacter>(GetOwner());
-	BindInputActions(PlayerCharacter->InputComponent);
 }
 
-void UGravityControllerComponent::BindInputActions(UInputComponent* PlayerInputComponent)
-{
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// Gravity rotation actions
-		EnhancedInputComponent->BindAction(RotateGravityRightAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityRight);
-		EnhancedInputComponent->BindAction(RotateGravityLeftAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityLeft);
-		EnhancedInputComponent->BindAction(RotateGravityForwardAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityForward);
-		EnhancedInputComponent->BindAction(RotateGravityBackwardAction, ETriggerEvent::Triggered, this, &UGravityControllerComponent::RotateGravityBackward);
-	}
-}
 
 // Called every frame
 void UGravityControllerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

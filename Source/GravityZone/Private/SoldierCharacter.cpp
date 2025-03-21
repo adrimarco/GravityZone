@@ -6,6 +6,8 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GravityControllerComponent.h"
+#include "WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -16,6 +18,8 @@ ASoldierCharacter::ASoldierCharacter()
 	FPCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPSCamera"));
 	FPCamera->SetupAttachment(GetCapsuleComponent());
 	FPCamera->bUsePawnControlRotation = false;
+
+	GravityController = CreateDefaultSubobject<UGravityControllerComponent>(TEXT("Gravity Controller"));
 }
 
 void ASoldierCharacter::BeginPlay()
@@ -90,7 +94,29 @@ void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 			// Looking
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::Look);
+
+			// Gravity rotation actions
+			EnhancedInputComponent->BindAction(RotateGravityRightAction, ETriggerEvent::Triggered, GravityController, &UGravityControllerComponent::RotateGravityRight);
+			EnhancedInputComponent->BindAction(RotateGravityLeftAction, ETriggerEvent::Triggered, GravityController, &UGravityControllerComponent::RotateGravityLeft);
+			EnhancedInputComponent->BindAction(RotateGravityForwardAction, ETriggerEvent::Triggered, GravityController, &UGravityControllerComponent::RotateGravityForward);
+			EnhancedInputComponent->BindAction(RotateGravityBackwardAction, ETriggerEvent::Triggered, GravityController, &UGravityControllerComponent::RotateGravityBackward);
+		
+			// Shot
+			EnhancedInputComponent->BindAction(ShotAction, ETriggerEvent::Started, this, &ASoldierCharacter::FireWeapon);
+			EnhancedInputComponent->BindAction(ShotAction, ETriggerEvent::Completed, this, &ASoldierCharacter::StopFiringWeapon);
 		}
 	}
+}
+
+void ASoldierCharacter::FireWeapon()
+{
+	if (EquipedWeapon != nullptr)
+		EquipedWeapon->StartFiring();
+}
+
+void ASoldierCharacter::StopFiringWeapon()
+{
+	if (EquipedWeapon != nullptr)
+		EquipedWeapon->StopFiring();
 }
 

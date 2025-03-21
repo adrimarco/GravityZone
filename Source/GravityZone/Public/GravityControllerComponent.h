@@ -31,22 +31,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Camera target")
 	float CachedCameraTargetDistance{ 0 };
 
-	/*
-	** Input Actions
-	*/
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
-	UInputAction* RotateGravityRightAction{ nullptr };
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
-	UInputAction* RotateGravityLeftAction{ nullptr };
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
-	UInputAction* RotateGravityForwardAction{ nullptr };
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
-	UInputAction* RotateGravityBackwardAction{ nullptr };
-
 public:	
 	// Sets default values for this component's properties
 	UGravityControllerComponent();
@@ -54,9 +38,6 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-	UFUNCTION(Category = "Input")
-	void BindInputActions(UInputComponent* PlayerInputComponent);
 
 	// Rotates gravity around character's forward axis
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
@@ -66,6 +47,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void RotateGravityVertically(float Angle);
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void RotateGravityRight();
 
@@ -78,6 +60,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void RotateGravityBackward();
 
+protected:
 	// Updates TargetGravityDirection and enables gravity's direction interpolation.
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void ChangeGravityDirection(const FVector& NewDirection);

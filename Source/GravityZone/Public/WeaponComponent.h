@@ -29,7 +29,7 @@ protected:
 
 	// Current amount of bullets loaded in the weapon.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int32 LoadedAmmo{ MagazineCapacity };
+	int32 LoadedAmmo{ 1000 };
 
 	// Maximum capacity of bullets that can be loaded into the weapon.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
@@ -43,7 +43,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int32 MaxReserveAmmo{ 1000 };
 
-	
+
 public:	
 	// Sets default values for this component's properties
 	UWeaponComponent();

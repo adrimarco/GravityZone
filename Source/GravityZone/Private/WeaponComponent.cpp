@@ -2,6 +2,7 @@
 
 
 #include "WeaponComponent.h"
+#include "ParticlesProviderSubsystem.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -47,6 +48,7 @@ void UWeaponComponent::ShotBullet()
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("No actor hit: %f/%f/%f"), ImpactLocation.X, ImpactLocation.Y, ImpactLocation.Z);
 	}
+	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(GetAttachParent()->GetComponentLocation(), ImpactLocation, GetAttachParent()->GetComponentRotation());
 }
 
 AActor* UWeaponComponent::GetShotHitActor(FVector& ImpactLocation) const

@@ -35,7 +35,7 @@ ANiagaraActor* AParticlesPool::GetParticleSystemFromPool()
 	ANiagaraActor* FreeSystem{ nullptr };
 
 	if (!FreeParticleSystems.IsEmpty()) {
-		FreeSystem = FreeParticleSystems.Pop(false);
+		FreeSystem = FreeParticleSystems.Pop(EAllowShrinking::No);
 		FreeSystem->GetNiagaraComponent()->OnSystemFinished.AddUniqueDynamic(this, &AParticlesPool::ReturnToPool);
 	}
 

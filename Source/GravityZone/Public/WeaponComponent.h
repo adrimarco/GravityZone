@@ -54,10 +54,10 @@ protected:
 
 	void ShotBullet();
 
-	// Performs a raycast to return the actor that would be hit by a shot.
+	// Performs a raycast from InitialLocation to EndLocation and returns the hit actor.
 	// ImpactLocation is updated with the impact position of the bullet in world space.
 	// Returns nullptr if no actor is hit.
-	AActor* GetShotHitActor(FVector& ImpactLocation) const;
+	AActor* GetShotHitActor(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const;
 
 public:	
 	// Called every frame

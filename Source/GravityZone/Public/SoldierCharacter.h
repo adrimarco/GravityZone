@@ -82,7 +82,10 @@ protected:
 	void FireWeapon();
 	void StopFiringWeapon();
 
+	UFUNCTION(BlueprintCallable)
 	void Die();
+
+	UFUNCTION(BlueprintCallable)
 	void Spawn();
 
 public:	

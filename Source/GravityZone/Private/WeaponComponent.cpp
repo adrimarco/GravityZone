@@ -3,6 +3,7 @@
 
 #include "WeaponComponent.h"
 #include "ParticlesProviderSubsystem.h"
+#include "DamageComponent.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -46,18 +47,22 @@ void UWeaponComponent::ShotBullet()
 	FVector ImpactLocation;
 
 	if (AActor* HitActor = GetShotHitActor(ShotInitialLocation, ShotRayEndLocation, ImpactLocation)) {
-		UE_LOG(LogTemp, Warning, TEXT("Actor shot: %s at %f/%f/%f"), *HitActor->GetName(), ImpactLocation.X, ImpactLocation.Y, ImpactLocation.Z);
+		UDamageComponent* HitActorDamageComp = HitActor->GetComponentByClass<UDamageComponent>();
+		if (HitActorDamageComp) {
+			HitActorDamageComp->TakeDamage(ProjectileBaseDamage);
+		}
 	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("No actor hit: %f/%f/%f"), ImpactLocation.X, ImpactLocation.Y, ImpactLocation.Z);
-	}
+
 	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(ShotInitialLocation, ImpactLocation, GetAttachParent()->GetComponentRotation());
 }
 
 AActor* UWeaponComponent::GetShotHitActor(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const
 {
+	FCollisionQueryParams QueryParams = FCollisionQueryParams::DefaultQueryParam;
+	QueryParams.AddIgnoredActor(GetOwner());
+
 	FHitResult HitResult;
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, InitialLocation, EndLocation, ECollisionChannel::ECC_Visibility)) {
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, InitialLocation, EndLocation, ECollisionChannel::ECC_Camera, QueryParams)) {
 		ImpactLocation = HitResult.ImpactPoint;
 		return HitResult.GetActor();
 	}

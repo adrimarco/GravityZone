@@ -10,6 +10,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 class UGravityControllerComponent;
+class UDamageComponent;
 class UWeaponComponent;
 struct FInputActionValue;
 
@@ -23,6 +24,9 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UGravityControllerComponent* GravityController{ nullptr };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UDamageComponent* DamageComponent{ nullptr };
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* EquipedWeapon{ nullptr };
@@ -77,6 +81,9 @@ protected:
 
 	void FireWeapon();
 	void StopFiringWeapon();
+
+	void Die();
+	void Spawn();
 
 public:	
 	// Called every frame

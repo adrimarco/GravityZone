@@ -8,6 +8,8 @@
 #include "EnhancedInputComponent.h"
 #include "GravityControllerComponent.h"
 #include "WeaponComponent.h"
+#include "DamageComponent.h"
+#include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -20,6 +22,9 @@ ASoldierCharacter::ASoldierCharacter()
 	FPCamera->bUsePawnControlRotation = false;
 
 	GravityController = CreateDefaultSubobject<UGravityControllerComponent>(TEXT("Gravity Controller"));
+
+	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("Damage Component"));
+	DamageComponent->OnActorDie.AddDynamic(this, &ASoldierCharacter::Die);
 }
 
 void ASoldierCharacter::BeginPlay()
@@ -118,5 +123,17 @@ void ASoldierCharacter::StopFiringWeapon()
 {
 	if (EquipedWeapon != nullptr)
 		EquipedWeapon->StopFiring();
+}
+
+void ASoldierCharacter::Die()
+{
+	DisableInput(Cast<APlayerController>(Controller));
+	SetActorHiddenInGame(true);
+}
+
+void ASoldierCharacter::Spawn()
+{
+	EnableInput(Cast<APlayerController>(Controller));
+	SetActorHiddenInGame(false);
 }
 

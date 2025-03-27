@@ -27,6 +27,15 @@ protected:
 	float EffectiveRange{ 1000 };
 
 
+	// After shoting, time required to shot again.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire rate")
+	float FireRate{ 0.1f };
+
+	// Time elapsed since last shot.
+	UPROPERTY(BlueprintReadOnly, Category = "Fire rate")
+	float LastShotTimer{ 0 };
+
+
 	// Current amount of bullets loaded in the weapon.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int32 LoadedAmmo{ 0 };
@@ -73,4 +82,5 @@ public:
 	virtual void StartFiring();
 	virtual void StopFiring();
 	virtual void ReloadAmmo();
+	virtual void UpdateFireRate(float Time);
 };

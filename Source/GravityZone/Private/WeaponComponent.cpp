@@ -30,7 +30,7 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	UpdateFireRate(DeltaTime);
 }
 
 void UWeaponComponent::ResetWeaponAmmo()
@@ -41,7 +41,7 @@ void UWeaponComponent::ResetWeaponAmmo()
 
 void UWeaponComponent::ShotBullet()
 {
-	if (LoadedAmmo <= 0) return;
+	if (LastShotTimer < FireRate || LoadedAmmo <= 0) return;
 
 	// Raycast trace to detect actors hit by the shot
 	FVector ShotInitialLocation{ GetAttachParent()->GetComponentLocation() };
@@ -59,6 +59,7 @@ void UWeaponComponent::ShotBullet()
 	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(ShotInitialLocation, ImpactLocation, GetAttachParent()->GetComponentRotation());
 
 	LoadedAmmo--;
+	LastShotTimer = 0;
 }
 
 AActor* UWeaponComponent::GetActorHitByShot(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const
@@ -94,6 +95,12 @@ void UWeaponComponent::ReloadAmmo()
 
 	LoadedAmmo += AmmoToLoad;
 	ReserveAmmo -= AmmoToLoad;
+}
+
+void UWeaponComponent::UpdateFireRate(float Time)
+{
+	if (LastShotTimer < FireRate)
+		LastShotTimer += Time;
 }
 
 void UWeaponComponent::StartFiring()

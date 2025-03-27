@@ -41,7 +41,12 @@ void UWeaponComponent::ResetWeaponAmmo()
 
 void UWeaponComponent::ShotBullet()
 {
-	if (LastShotTimer < FireRate || LoadedAmmo <= 0) return;
+	if (LastShotTimer < FireRate) return;
+
+	if (LoadedAmmo <= 0) {
+		ReloadAmmo();
+		return;
+	}
 
 	// Raycast trace to detect actors hit by the shot
 	FVector ShotInitialLocation{ GetAttachParent()->GetComponentLocation() };

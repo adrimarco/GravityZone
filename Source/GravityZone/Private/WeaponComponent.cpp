@@ -21,8 +21,7 @@ void UWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	ResetWeaponAmmo();
 }
 
 
@@ -42,21 +41,27 @@ void UWeaponComponent::ResetWeaponAmmo()
 
 void UWeaponComponent::ShotBullet()
 {
+	if (LoadedAmmo <= 0) return;
+
+	// Raycast trace to detect actors hit by the shot
 	FVector ShotInitialLocation{ GetAttachParent()->GetComponentLocation() };
 	FVector ShotRayEndLocation{ ShotInitialLocation + GetAttachParent()->GetForwardVector() * 20000 };
 	FVector ImpactLocation;
 
-	if (AActor* HitActor = GetShotHitActor(ShotInitialLocation, ShotRayEndLocation, ImpactLocation)) {
-		UDamageComponent* HitActorDamageComp = HitActor->GetComponentByClass<UDamageComponent>();
-		if (HitActorDamageComp) {
-			HitActorDamageComp->TakeDamage(ProjectileBaseDamage);
+	if (AActor* HitActor = GetActorHitByShot(ShotInitialLocation, ShotRayEndLocation, ImpactLocation)) {
+		if (UDamageComponent* HitActorDamageComp = HitActor->GetComponentByClass<UDamageComponent>()) {
+			float DistanceToHitActor = FVector::Distance(ShotInitialLocation, ImpactLocation);
+			HitActorDamageComp->TakeDamage(GetDamageByDistance(DistanceToHitActor));
 		}
 	}
 
+	// Particle effects
 	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(ShotInitialLocation, ImpactLocation, GetAttachParent()->GetComponentRotation());
+
+	LoadedAmmo--;
 }
 
-AActor* UWeaponComponent::GetShotHitActor(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const
+AActor* UWeaponComponent::GetActorHitByShot(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const
 {
 	FCollisionQueryParams QueryParams = FCollisionQueryParams::DefaultQueryParam;
 	QueryParams.AddIgnoredActor(GetOwner());
@@ -70,6 +75,25 @@ AActor* UWeaponComponent::GetShotHitActor(FVector InitialLocation, FVector EndLo
 	// No object hit
 	ImpactLocation = EndLocation;
 	return nullptr;
+}
+
+float UWeaponComponent::GetDamageByDistance(float Distance) const
+{
+	float Damage{ ProjectileBaseDamage };
+	if (Distance > EffectiveRange)
+		Damage = FMath::Max(1, Damage - (Distance - EffectiveRange) / 100 * DamageFalloff);
+
+	return Damage;
+}
+
+void UWeaponComponent::ReloadAmmo()
+{
+	if (LoadedAmmo >= MagazineCapacity) return;
+
+	int32 AmmoToLoad{ FMath::Min(MagazineCapacity - LoadedAmmo, ReserveAmmo) };
+
+	LoadedAmmo += AmmoToLoad;
+	ReserveAmmo -= AmmoToLoad;
 }
 
 void UWeaponComponent::StartFiring()

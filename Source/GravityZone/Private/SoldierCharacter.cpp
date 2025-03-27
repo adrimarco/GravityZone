@@ -109,6 +109,9 @@ void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			// Shot
 			EnhancedInputComponent->BindAction(ShotAction, ETriggerEvent::Started, this, &ASoldierCharacter::FireWeapon);
 			EnhancedInputComponent->BindAction(ShotAction, ETriggerEvent::Completed, this, &ASoldierCharacter::StopFiringWeapon);
+
+			// Reload
+			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::ReloadWeapon);
 		}
 	}
 }
@@ -123,6 +126,12 @@ void ASoldierCharacter::StopFiringWeapon()
 {
 	if (EquipedWeapon != nullptr)
 		EquipedWeapon->StopFiring();
+}
+
+void ASoldierCharacter::ReloadWeapon()
+{
+	if (EquipedWeapon != nullptr)
+		EquipedWeapon->ReloadAmmo();
 }
 
 void ASoldierCharacter::Die()

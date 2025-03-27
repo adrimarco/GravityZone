@@ -51,6 +51,9 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 	UInputAction* ShotAction{ nullptr };
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ReloadAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* RotateGravityRightAction{ nullptr };
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
@@ -81,6 +84,7 @@ protected:
 
 	void FireWeapon();
 	void StopFiringWeapon();
+	void ReloadWeapon();
 
 	UFUNCTION(BlueprintCallable)
 	void Die();

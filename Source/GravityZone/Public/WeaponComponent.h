@@ -29,7 +29,7 @@ protected:
 
 	// Current amount of bullets loaded in the weapon.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int32 LoadedAmmo{ 1000 };
+	int32 LoadedAmmo{ 0 };
 
 	// Maximum capacity of bullets that can be loaded into the weapon.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
@@ -37,7 +37,7 @@ protected:
 
 	// Number of bullets available in reserve (not currently loaded in the weapon).
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ammo")
-	int32 ReserveAmmo{ 1000 };
+	int32 ReserveAmmo{ 0 };
 
 	// Maximum number of bullets the player can carry in reserve.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
@@ -57,7 +57,10 @@ protected:
 	// Performs a raycast from InitialLocation to EndLocation and returns the hit actor.
 	// ImpactLocation is updated with the impact position of the bullet in world space.
 	// Returns nullptr if no actor is hit.
-	AActor* GetShotHitActor(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const;
+	AActor* GetActorHitByShot(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const;
+
+	// Returns the damage dealt by the weapon to a target at the provided Distance
+	float GetDamageByDistance(float Distance) const;
 
 public:	
 	// Called every frame
@@ -69,4 +72,5 @@ public:
 	
 	virtual void StartFiring();
 	virtual void StopFiring();
+	virtual void ReloadAmmo();
 };

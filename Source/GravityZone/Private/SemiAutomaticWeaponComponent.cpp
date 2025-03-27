@@ -34,10 +34,9 @@ void USemiAutomaticWeaponComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 void USemiAutomaticWeaponComponent::StartFiring()
 {
-	ShotBullet();
-}
-
-void USemiAutomaticWeaponComponent::StopFiring()
-{
+	if (LoadedAmmo <= 0)
+		ReloadAmmo();
+	else
+		ShotBullet();
 }
 

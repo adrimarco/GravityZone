@@ -42,6 +42,7 @@ void UDamageComponent::TakeDamage(float DamagePoints)
 	if (Health <= 0) return;
 
 	Health -= DamagePoints;
+	//UE_LOG(LogTemp, Warning, TEXT("DAMAGE: %f -> %f"), DamagePoints, Health);
 
 	if (Health <= 0) {
 		OnActorDie.Broadcast();

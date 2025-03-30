@@ -9,6 +9,7 @@
 #include "GravityControllerComponent.h"
 #include "WeaponComponent.h"
 #include "DamageComponent.h"
+#include "Respawnable.h"
 #include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -25,12 +26,15 @@ ASoldierCharacter::ASoldierCharacter()
 
 	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("Damage Component"));
 	DamageComponent->OnActorDie.AddDynamic(this, &ASoldierCharacter::Die);
+
+	RespawnComponent = CreateDefaultSubobject<URespawnable>(TEXT("Respawn Component"));
 }
 
 void ASoldierCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	RespawnComponent->OnRespawn.AddDynamic(this, &ASoldierCharacter::Spawn);
 }
 
 float ASoldierCharacter::GetPitchOffsetClampedToCameraLimit(float AddedPitch) const
@@ -138,11 +142,15 @@ void ASoldierCharacter::Die()
 {
 	DisableInput(Cast<APlayerController>(Controller));
 	SetActorHiddenInGame(true);
+	RespawnComponent->RequestRespawn(Controller);
 }
 
 void ASoldierCharacter::Spawn()
 {
+	FPCamera->SetRelativeRotation(FQuat::Identity);
+	GetCharacterMovement()->StopMovementImmediately();
 	EnableInput(Cast<APlayerController>(Controller));
 	SetActorHiddenInGame(false);
+	GravityController->SetDefaultGravityDirection();
 }
 

@@ -12,6 +12,7 @@ class UInputAction;
 class UGravityControllerComponent;
 class UDamageComponent;
 class UWeaponComponent;
+class URespawnable;
 struct FInputActionValue;
 
 UCLASS(config=Game)
@@ -27,6 +28,9 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UDamageComponent* DamageComponent{ nullptr };
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	URespawnable* RespawnComponent{ nullptr };
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* EquipedWeapon{ nullptr };

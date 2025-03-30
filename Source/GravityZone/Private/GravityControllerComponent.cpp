@@ -95,6 +95,18 @@ void UGravityControllerComponent::RotateGravityBackward()
 	RotateGravityVertically(90);
 }
 
+void UGravityControllerComponent::RotateGravityToDefault()
+{
+	ChangeGravityDirection(FVector::DownVector);
+}
+
+void UGravityControllerComponent::SetDefaultGravityDirection()
+{
+	bIsInterpolatingGravity = false;
+	TargetGravityDirection = FVector::DownVector;
+	PlayerCharacter->GetCharacterMovement()->SetGravityDirection(FVector::DownVector);
+}
+
 void UGravityControllerComponent::ChangeGravityDirection(const FVector& NewDirection)
 {
 	TargetGravityDirection = NewDirection;

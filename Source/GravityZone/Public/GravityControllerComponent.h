@@ -60,8 +60,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void RotateGravityBackward();
 
+	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
+	void RotateGravityToDefault();
+
+	// Changes gravity direction to default direction without rotating the actor.
+	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
+	void SetDefaultGravityDirection();
+
 protected:
 	// Updates TargetGravityDirection and enables gravity's direction interpolation.
+	// Interpolating the direction causes the actor to rotate.
 	UFUNCTION(BlueprintCallable, Category = "Gravity Change")
 	void ChangeGravityDirection(const FVector& NewDirection);
 

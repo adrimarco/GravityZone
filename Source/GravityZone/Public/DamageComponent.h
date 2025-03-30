@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "DamageComponent.generated.h"
 
-UDELEGATE(BlueprintCallable)
+UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActorDieDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

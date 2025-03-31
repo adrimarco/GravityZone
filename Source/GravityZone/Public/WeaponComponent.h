@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "WeaponComponent.generated.h"
 
+class Texture2d;
 
 UCLASS(Abstract, ClassGroup=(Custom) )
 class GRAVITYZONE_API UWeaponComponent : public USkeletalMeshComponent
@@ -13,6 +14,14 @@ class GRAVITYZONE_API UWeaponComponent : public USkeletalMeshComponent
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
+	FName Name{};
+
+	// Weapon image to display in UI
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
+	TObjectPtr<UTexture2D> Image{};
+
+
 	// Base damage dealt by each projectile when within effective range.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	float ProjectileBaseDamage{ 1 };

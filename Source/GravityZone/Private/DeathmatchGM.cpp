@@ -3,6 +3,7 @@
 
 #include "DeathmatchGM.h"
 #include "Respawnable.h"
+#include "WeaponFactory.h"
 
 ADeathmatchGM::ADeathmatchGM()
 {
@@ -17,6 +18,9 @@ ADeathmatchGM::~ADeathmatchGM()
 void ADeathmatchGM::BeginPlay()
 {
 	EnableRespawn(true);
+
+	if (WeaponFactory)
+		GetWorld()->SpawnActor<AWeaponFactory>(WeaponFactory, FActorSpawnParameters{});
 }
 
 void ADeathmatchGM::RespawnPlayer(AController* PlayerController, URespawnable* RespawnableComponent)

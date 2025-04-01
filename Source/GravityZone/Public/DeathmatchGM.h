@@ -8,11 +8,16 @@
 #include "DeathmatchGM.generated.h"
 
 class URespawnable;
+class AWeaponFactory;
 
 UCLASS()
 class GRAVITYZONE_API ADeathmatchGM : public AGameMode, public IRespawnManager
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<AWeaponFactory> WeaponFactory{};
 
 public:
 	ADeathmatchGM();

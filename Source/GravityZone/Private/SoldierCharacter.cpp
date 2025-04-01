@@ -117,6 +117,9 @@ void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 			// Reload
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::ReloadWeapon);
+
+			// Change weapon
+			EnhancedInputComponent->BindAction(ChangeWeaponAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::ChangeEquipedWeapon);
 		}
 	}
 }
@@ -124,7 +127,6 @@ void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 void ASoldierCharacter::AddNewWeapon(const EWeaponId& Id)
 {
 	AWeaponFactory* WeaponFactory{ AWeaponFactory::GetInstance() };
-
 	if (WeaponFactory == nullptr) return;
 
 	UWeaponComponent* NewWeapon{ WeaponFactory->CreateWeapon(Id, FPCamera) };
@@ -133,8 +135,36 @@ void ASoldierCharacter::AddNewWeapon(const EWeaponId& Id)
 	NewWeapon->SetRelativeLocation(FVector(0, 30, -20));
 	NewWeapon->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 0, -90)));
 
+	SaveWeaponComponent(NewWeapon);
+
 	if (EquipedWeapon == nullptr)
 		EquipedWeapon = NewWeapon;
+}
+
+void ASoldierCharacter::SaveWeaponComponent(UWeaponComponent* NewWeapon)
+{
+	EWeaponCategory Category{ NewWeapon->GetCategory() };
+	UWeaponComponent** StoredWeaponPointer;
+
+	if (Category == EWeaponCategory::Main) {
+		StoredWeaponPointer = &MainWeapon;
+	}
+	else if (Category == EWeaponCategory::Secondary) {
+		StoredWeaponPointer = &SecondaryWeapon;
+	}
+	else {
+		StoredWeaponPointer = &MeleeWeapon;
+	}
+
+	if (*StoredWeaponPointer) {
+		// Another weapon with the same category exists
+		if (EquipedWeapon == *StoredWeaponPointer)
+			EquipedWeapon = nullptr;
+
+		(*StoredWeaponPointer)->DestroyComponent();
+	}
+
+	*StoredWeaponPointer = NewWeapon;
 }
 
 void ASoldierCharacter::FireWeapon()
@@ -153,6 +183,14 @@ void ASoldierCharacter::ReloadWeapon()
 {
 	if (EquipedWeapon != nullptr)
 		EquipedWeapon->ReloadAmmo();
+}
+
+void ASoldierCharacter::ChangeEquipedWeapon()
+{
+	UWeaponComponent* NewEquipedWeapon{ EquipedWeapon == MainWeapon ? SecondaryWeapon : MainWeapon };
+
+	if (NewEquipedWeapon)
+		EquipedWeapon = NewEquipedWeapon;
 }
 
 void ASoldierCharacter::Die()

@@ -33,8 +33,17 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	URespawnable* RespawnComponent{ nullptr };
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* EquipedWeapon{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	UWeaponComponent* MainWeapon{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	UWeaponComponent* SecondaryWeapon{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	UWeaponComponent* MeleeWeapon{ nullptr };
 
 	/*
 	** Input Actions
@@ -57,6 +66,9 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* ReloadAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ChangeWeaponAction{ nullptr };
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* RotateGravityRightAction{ nullptr };
@@ -90,6 +102,7 @@ protected:
 	void FireWeapon();
 	void StopFiringWeapon();
 	void ReloadWeapon();
+	void ChangeEquipedWeapon();
 
 	UFUNCTION(BlueprintCallable)
 	void Die();
@@ -110,4 +123,9 @@ public:
 	// Gives the character a weapon with the provided Id.
 	UFUNCTION(BlueprintCallable)
 	void AddNewWeapon(const EWeaponId& Id);
+
+	// Checks NewWeapon category and saves its reference in the appropiate variable.
+	// As soldier can hold one weapon of each type, if another weapon with the same 
+	// category exists, it is destroyed.
+	void SaveWeaponComponent(UWeaponComponent* NewWeapon);
 };

@@ -8,6 +8,13 @@
 
 class Texture2d;
 
+UENUM(BlueprintType)
+enum class EWeaponCategory : uint8 {
+	Main,
+	Secondary,
+	Melee,
+};
+
 UCLASS(Abstract, ClassGroup=(Custom) )
 class GRAVITYZONE_API UWeaponComponent : public USkeletalMeshComponent
 {
@@ -20,6 +27,9 @@ protected:
 	// Weapon image to display in UI
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
 	TObjectPtr<UTexture2D> Image{};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
+	EWeaponCategory Category;
 
 
 	// Base damage dealt by each projectile when within effective range.
@@ -92,4 +102,6 @@ public:
 	virtual void StopFiring();
 	virtual void ReloadAmmo();
 	virtual void UpdateFireRate(float Time);
+
+	EWeaponCategory GetCategory() const { return Category; };
 };

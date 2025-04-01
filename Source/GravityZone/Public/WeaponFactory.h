@@ -8,8 +8,8 @@
 
 class UWeaponComponent;
 
-UENUM()
-enum EWeaponId {
+UENUM(BlueprintType)
+enum class EWeaponId : uint8 {
 	Default,
 	Glock,
 	AK,
@@ -26,7 +26,7 @@ protected:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<TEnumAsByte<EWeaponId>, TSubclassOf<UWeaponComponent>> Weapons{};
+	TMap<EWeaponId, TSubclassOf<UWeaponComponent>> Weapons{};
 
 public:	
 	// Sets default values for this actor's properties
@@ -44,6 +44,6 @@ public:
 	// Returns nullptr if cannot create the component.
 	UWeaponComponent* CreateWeapon(const EWeaponId& Id, USceneComponent* NewWeaponParent) const;
 
-	//UFUNCTION(BlueprintCallable, BlueprintPure)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static AWeaponFactory* GetInstance() { return Instance; };
 };

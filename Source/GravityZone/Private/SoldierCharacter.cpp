@@ -12,6 +12,7 @@
 #include "Respawnable.h"
 #include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "WeaponFactory.h"
 
 // Sets default values
 ASoldierCharacter::ASoldierCharacter()
@@ -118,6 +119,22 @@ void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::ReloadWeapon);
 		}
 	}
+}
+
+void ASoldierCharacter::AddNewWeapon(const EWeaponId& Id)
+{
+	AWeaponFactory* WeaponFactory{ AWeaponFactory::GetInstance() };
+
+	if (WeaponFactory == nullptr) return;
+
+	UWeaponComponent* NewWeapon{ WeaponFactory->CreateWeapon(Id, FPCamera) };
+	if (NewWeapon == nullptr) return; 
+	
+	NewWeapon->SetRelativeLocation(FVector(0, 30, -20));
+	NewWeapon->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 0, -90)));
+
+	if (EquipedWeapon == nullptr)
+		EquipedWeapon = NewWeapon;
 }
 
 void ASoldierCharacter::FireWeapon()

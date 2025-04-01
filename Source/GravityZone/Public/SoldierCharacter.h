@@ -14,6 +14,7 @@ class UDamageComponent;
 class UWeaponComponent;
 class URespawnable;
 struct FInputActionValue;
+enum class EWeaponId : uint8;
 
 UCLASS(config=Game)
 class GRAVITYZONE_API ASoldierCharacter : public ACharacter
@@ -105,4 +106,8 @@ public:
 
 	// Returns character's attached camera.
 	UCameraComponent* GetCamera() const { return FPCamera; }
+
+	// Gives the character a weapon with the provided Id.
+	UFUNCTION(BlueprintCallable)
+	void AddNewWeapon(const EWeaponId& Id);
 };

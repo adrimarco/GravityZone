@@ -37,6 +37,9 @@ void UWeaponComponent::ResetWeaponAmmo()
 {
 	LoadedAmmo = MagazineCapacity;
 	ReserveAmmo = MaxReserveAmmo / 2;
+
+	OnLoadedAmmoChanged.Broadcast(LoadedAmmo);
+	OnReserveAmmoChanged.Broadcast(ReserveAmmo);
 }
 
 void UWeaponComponent::ShotBullet()
@@ -65,6 +68,7 @@ void UWeaponComponent::ShotBullet()
 
 	LoadedAmmo--;
 	LastShotTimer = 0;
+	OnLoadedAmmoChanged.Broadcast(LoadedAmmo);
 }
 
 AActor* UWeaponComponent::GetActorHitByShot(FVector InitialLocation, FVector EndLocation, FVector& ImpactLocation) const
@@ -100,6 +104,9 @@ void UWeaponComponent::ReloadAmmo()
 
 	LoadedAmmo += AmmoToLoad;
 	ReserveAmmo -= AmmoToLoad;
+
+	OnLoadedAmmoChanged.Broadcast(LoadedAmmo);
+	OnReserveAmmoChanged.Broadcast(ReserveAmmo);
 }
 
 void UWeaponComponent::UpdateFireRate(float Time)

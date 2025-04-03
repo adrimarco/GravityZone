@@ -7,6 +7,7 @@
 #include "AmmoCounterWidget.generated.h"
 
 class ULabel;
+class UWeaponComponent;
 
 UCLASS()
 class GRAVITYZONE_API UAmmoCounterWidget : public UUserWidget
@@ -20,10 +21,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widgets", meta = (BindWidget))
 	ULabel* ReserveAmmoLabel{ nullptr };
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWeaponComponent* Weapon{ nullptr };
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetLoadedAmmo(int32 Ammo);
 
 	UFUNCTION(BlueprintCallable)
 	void SetReserveAmmo(int32 Ammo);
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponReference(UWeaponComponent* NewWeapon);
 };

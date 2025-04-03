@@ -16,6 +16,9 @@ class URespawnable;
 struct FInputActionValue;
 enum class EWeaponId : uint8;
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponEquipedDelegate, UWeaponComponent*, Weapon);
+
 UCLASS(config=Game)
 class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 {
@@ -44,6 +47,11 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* MeleeWeapon{ nullptr };
+
+public:
+	// Notifies when a new weapon is equiped.
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FWeaponEquipedDelegate OnWeaponEquiped;
 
 	/*
 	** Input Actions
@@ -117,9 +125,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Returns character's attached camera.
-	UCameraComponent* GetCamera() const { return FPCamera; }
-
 	// Gives the character a weapon with the provided Id.
 	UFUNCTION(BlueprintCallable)
 	void AddNewWeapon(const EWeaponId& Id);
@@ -128,4 +133,13 @@ public:
 	// As soldier can hold one weapon of each type, if another weapon with the same 
 	// category exists, it is destroyed.
 	void SaveWeaponComponent(UWeaponComponent* NewWeapon);
+	
+	// Returns character's attached camera.
+	UCameraComponent* GetCamera() const { return FPCamera; }
+	
+	// Returns character's equiped weapon.
+	UWeaponComponent* GetEquipedWeapon() const { return EquipedWeapon; }
+
+	UDamageComponent* GetDamageComponent() const { return DamageComponent; }
+	UGravityControllerComponent* GetGravityController() const { return GravityController; }
 };

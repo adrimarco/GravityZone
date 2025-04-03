@@ -8,6 +8,12 @@
 
 class Texture2d;
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLoadedAmmoChangeDelegate, int32, LoadedAmmo);
+
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FReserveAmmoChangeDelegate, int32, ReserveAmmo);
+
 UENUM(BlueprintType)
 enum class EWeaponCategory : uint8 {
 	Main,
@@ -71,6 +77,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int32 MaxReserveAmmo{ 1000 };
 
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FLoadedAmmoChangeDelegate OnLoadedAmmoChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FReserveAmmoChangeDelegate OnReserveAmmoChanged;
 
 public:	
 	// Sets default values for this component's properties
@@ -103,5 +115,8 @@ public:
 	virtual void ReloadAmmo();
 	virtual void UpdateFireRate(float Time);
 
-	EWeaponCategory GetCategory() const { return Category; };
+	EWeaponCategory GetCategory() const { return Category; }
+	int32 GetLoadedAmmo() const { return LoadedAmmo; }
+	int32 GetMagazineCapacity() const { return MagazineCapacity; }
+	int32 GetReserveAmmo() const { return ReserveAmmo; }
 };

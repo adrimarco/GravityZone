@@ -30,11 +30,13 @@ void UDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 void UDamageComponent::RecoverHealth(float HealthRecovered)
 {
 	Health = FMath::Min(Health + HealthRecovered, MaxHealth);
+	OnActorHealed.Broadcast(Health, MaxHealth);
 }
 
 void UDamageComponent::RecoverFullHealth()
 {
 	Health = MaxHealth;
+	OnActorHealed.Broadcast(Health, MaxHealth);
 }
 
 void UDamageComponent::TakeDamage(float DamagePoints)
@@ -42,10 +44,12 @@ void UDamageComponent::TakeDamage(float DamagePoints)
 	if (Health <= 0) return;
 
 	Health -= DamagePoints;
-	//UE_LOG(LogTemp, Warning, TEXT("DAMAGE: %f -> %f"), DamagePoints, Health);
 
 	if (Health <= 0) {
 		OnActorDie.Broadcast();
+	}
+	else {
+		OnActorDamaged.Broadcast(Health, MaxHealth);
 	}
 }
 

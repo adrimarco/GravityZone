@@ -137,8 +137,10 @@ void ASoldierCharacter::AddNewWeapon(const EWeaponId& Id)
 
 	SaveWeaponComponent(NewWeapon);
 
-	if (EquipedWeapon == nullptr)
+	if (EquipedWeapon == nullptr) {
 		EquipedWeapon = NewWeapon;
+		OnWeaponEquiped.Broadcast(EquipedWeapon);
+	}
 }
 
 void ASoldierCharacter::SaveWeaponComponent(UWeaponComponent* NewWeapon)
@@ -189,8 +191,10 @@ void ASoldierCharacter::ChangeEquipedWeapon()
 {
 	UWeaponComponent* NewEquipedWeapon{ EquipedWeapon == MainWeapon ? SecondaryWeapon : MainWeapon };
 
-	if (NewEquipedWeapon)
+	if (NewEquipedWeapon) {
 		EquipedWeapon = NewEquipedWeapon;
+		OnWeaponEquiped.Broadcast(NewEquipedWeapon);
+	}
 }
 
 void ASoldierCharacter::Die()
@@ -207,5 +211,12 @@ void ASoldierCharacter::Spawn()
 	EnableInput(Cast<APlayerController>(Controller));
 	SetActorHiddenInGame(false);
 	GravityController->SetDefaultGravityDirection();
+
+	if (MainWeapon)
+		MainWeapon->ResetWeaponAmmo();
+	if (SecondaryWeapon)
+		SecondaryWeapon->ResetWeaponAmmo();
+
+	DamageComponent->RecoverFullHealth();
 }
 

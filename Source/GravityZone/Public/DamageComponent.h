@@ -9,6 +9,12 @@
 UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActorDieDelegate);
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActorDamagedDelegate, float, CurrentHealth, float, MaxHealth);
+
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActorHealedDelegate, float, CurrentHealth, float, MaxHealth);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GRAVITYZONE_API UDamageComponent : public UActorComponent
 {
@@ -24,6 +30,12 @@ protected:
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FActorDieDelegate OnActorDie;
+
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FActorDamagedDelegate OnActorDamaged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FActorHealedDelegate OnActorHealed;
 
 public:	
 	// Sets default values for this component's properties

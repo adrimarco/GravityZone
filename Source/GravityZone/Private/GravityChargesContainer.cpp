@@ -16,6 +16,16 @@ void UGravityChargesContainer::NativePreConstruct()
 	}
 }
 
+void UGravityChargesContainer::SetAvailableCharges(int32 NewAvailableChargesCount)
+{
+	int32 WidgetsCount{ Container->GetChildrenCount() };
+	for (int32 i = 0; i < WidgetsCount; i++) {
+		if (UGravityChargeIcon* GravityChargeWidget = Cast<UGravityChargeIcon>(Container->GetChildAt(i))) {
+			GravityChargeWidget->SetAvailable(i < NewAvailableChargesCount);
+		}
+	}
+}
+
 void UGravityChargesContainer::SetChargesCount(int32 NewChargesCount)
 {
 	if (NewChargesCount < 0) return;

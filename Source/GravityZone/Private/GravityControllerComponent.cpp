@@ -24,6 +24,7 @@ void UGravityControllerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerCharacter = Cast<ASoldierCharacter>(GetOwner());
+	CurrentCharges = MaxCharges;
 }
 
 
@@ -34,6 +35,7 @@ void UGravityControllerComponent::TickComponent(float DeltaTime, ELevelTick Tick
 	constexpr float InterpolationSpeed{ 5 };
 
 	InterpolateToTargetGravityDirection(DeltaTime * InterpolationSpeed);
+	UpdateCooldown(DeltaTime);
 }
 
 FVector UGravityControllerComponent::GetVectorAlignedToAxis(const FVector& OriginalVector)
@@ -57,6 +59,19 @@ FVector UGravityControllerComponent::GetVectorAlignedToAxis(const FVector& Origi
 		return FVector::DownVector;
 
 	return OriginalVector;
+}
+
+inline void UGravityControllerComponent::UpdateCooldown(float DeltaTime)
+{
+	if (CurrentCharges >= MaxCharges) return;
+
+	if (CurrentCooldown > 0)
+		CurrentCooldown -= DeltaTime;
+	else {
+		CurrentCooldown += ChargeCooldown;
+		CurrentCharges++;
+		OnChargeRecovered.Broadcast(CurrentCharges);
+	}
 }
 
 void UGravityControllerComponent::RotateGravityHorizontally(float Angle)
@@ -109,11 +124,19 @@ void UGravityControllerComponent::SetDefaultGravityDirection()
 
 void UGravityControllerComponent::ChangeGravityDirection(const FVector& NewDirection)
 {
+	if (CurrentCharges <= 0) return;
+
 	TargetGravityDirection = NewDirection;
 	bIsInterpolatingGravity = true;
 
 	CacheCameraTargetDistance();
 	bShouldCameraFollowTarget = true;
+
+	// If changes gravity with all charges, reset cooldown time
+	if (CurrentCharges >= MaxCharges)
+		CurrentCooldown = ChargeCooldown;
+	CurrentCharges--;
+	OnChargeLost.Broadcast(CurrentCharges);
 }
 
 void UGravityControllerComponent::InterpolateToTargetGravityDirection(float InterpolationAlpha)
@@ -177,4 +200,28 @@ void UGravityControllerComponent::RotateToPosition(const FVector& TargetPosition
 	
 	PlayerCharacter->AddActorLocalRotation(FRotator(0, AddedRotation.Yaw, 0));
 	PlayerCamera->AddRelativeRotation(FRotator(AddedRotation.Pitch, 0, 0));
+}
+
+void UGravityControllerComponent::SetCharges(int32 NewChargesCount)
+{
+	int32 ClampedChargesCount = FMath::Clamp(NewChargesCount, 0, MaxCharges);
+	if (CurrentCharges == ClampedChargesCount) return;
+
+	if (ClampedChargesCount > CurrentCharges)
+		OnChargeRecovered.Broadcast(ClampedChargesCount);
+	else
+		OnChargeLost.Broadcast(ClampedChargesCount);
+
+	CurrentCharges = ClampedChargesCount;
+}
+
+void UGravityControllerComponent::SetMaxCharges(int32 NewMaxChargesCount)
+{
+	if (MaxCharges == NewMaxChargesCount) return;
+
+	MaxCharges = FMath::Max(0, NewMaxChargesCount);
+	OnMaxChargesChanged.Broadcast(MaxCharges);
+
+	if (CurrentCharges > MaxCharges)
+		CurrentCharges = MaxCharges;
 }

@@ -29,5 +29,9 @@ void USoldierHUD::BindToSoldierCharacter(ASoldierCharacter* Character)
 
 	// Gravity
 	UGravityControllerComponent* GravityController{ Character->GetGravityController() };
-	GravityChargesDisplay->SetChargesCount(3);
+	GravityChargesDisplay->SetChargesCount(GravityController->GetMaxCharges());
+	GravityChargesDisplay->SetAvailableCharges(GravityController->GetCurrentCharges());
+	GravityController->OnChargeRecovered.AddDynamic(GravityChargesDisplay, &UGravityChargesContainer::SetAvailableCharges);
+	GravityController->OnChargeLost.AddDynamic(GravityChargesDisplay, &UGravityChargesContainer::SetAvailableCharges);
+	GravityController->OnMaxChargesChanged.AddDynamic(GravityChargesDisplay, &UGravityChargesContainer::SetChargesCount);
 }

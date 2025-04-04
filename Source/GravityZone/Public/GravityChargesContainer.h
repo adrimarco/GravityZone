@@ -30,9 +30,14 @@ protected:
 protected:
 	virtual void NativePreConstruct() override;
 
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetChargesCount(int32 NewChargesCount);
+
+	// Updates charges style to represent how many charges are available.
+	UFUNCTION(BlueprintCallable)
+	void SetAvailableCharges(int32 NewAvailableChargesCount);
 
 	// Calculates and returns the vertical offset for a container's child at the provided 
 	// ChargeIndex based on its position in the container, which depends on ChargesCount.

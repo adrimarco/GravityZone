@@ -28,6 +28,9 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 	UCameraComponent* FPCamera{ nullptr };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* FPMesh{ nullptr };
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UGravityControllerComponent* GravityController{ nullptr };
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

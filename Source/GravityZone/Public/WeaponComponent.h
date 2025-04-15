@@ -37,6 +37,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
 	EWeaponCategory Category;
 
+	// Skeletal mesh used to represent the weapon in another perspective.
+	// This mesh must stay visually synchronized with the primary mesh of this UWeaponComponent.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
+	TObjectPtr<USkeletalMeshComponent> MirroredMesh;
+
 
 	// Base damage dealt by each projectile when within effective range.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
@@ -109,6 +114,10 @@ public:
 	// Sets LoadedAmmo and ReserveAmmo to their default values
 	UFUNCTION(BlueprintCallable)
 	void ResetWeaponAmmo();
+
+	// Saves the provided USkeletalMeshComponent as MirroredMesh to keep it visually
+	// synchronized with the UWeaponComponent primary mesh.
+	void RegisterMirroredMesh(USkeletalMeshComponent* NewMirroredMesh);
 	
 	virtual void StartFiring();
 	virtual void StopFiring();
@@ -119,4 +128,5 @@ public:
 	int32 GetLoadedAmmo() const { return LoadedAmmo; }
 	int32 GetMagazineCapacity() const { return MagazineCapacity; }
 	int32 GetReserveAmmo() const { return ReserveAmmo; }
+	USkeletalMeshComponent* GetMirroredMesh() const { return MirroredMesh.Get(); }
 };

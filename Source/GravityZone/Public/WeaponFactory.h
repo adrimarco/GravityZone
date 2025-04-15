@@ -39,10 +39,11 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// Creates a new UWeaponComponent from the provided Id. The component is attached to NewWeaponParent.
+	// Creates a new UWeaponComponent from the provided Id. The component is attached to ThirdPersonParent.
+	// A second mesh used in first-person view is created and attached to FirsPersonParent.
 	// The Id with its associated UWeaponComponent must be present in the factory instance's map.
 	// Returns nullptr if cannot create the component.
-	UWeaponComponent* CreateWeapon(const EWeaponId& Id, USceneComponent* NewWeaponParent) const;
+	UWeaponComponent* CreateWeapon(const EWeaponId& Id, USceneComponent* ThirdPersonParent, USceneComponent* FirstPersonParent) const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static AWeaponFactory* GetInstance() { return Instance; };

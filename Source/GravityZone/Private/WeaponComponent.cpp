@@ -42,6 +42,16 @@ void UWeaponComponent::ResetWeaponAmmo()
 	OnReserveAmmoChanged.Broadcast(ReserveAmmo);
 }
 
+void UWeaponComponent::RegisterMirroredMesh(USkeletalMeshComponent* NewMirroredMesh)
+{
+	if (NewMirroredMesh == nullptr) return;
+
+	MirroredMesh = NewMirroredMesh;
+
+	// Synchronizes properties to visually match primary mesh
+	MirroredMesh->SetSkeletalMeshAsset(GetSkeletalMeshAsset());
+}
+
 void UWeaponComponent::ShotBullet()
 {
 	if (LastShotTimer < FireRate) return;

@@ -23,6 +23,13 @@ ASoldierCharacter::ASoldierCharacter()
 	FPCamera->SetupAttachment(GetCapsuleComponent());
 	FPCamera->bUsePawnControlRotation = false;
 
+	FPMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("First Person Mesh"));
+	FPMesh->SetupAttachment(FPCamera);
+	FPMesh->SetOnlyOwnerSee(true);
+	FPMesh->SetCastShadow(false);
+
+	GetMesh()->SetCastShadow(false);
+
 	GravityController = CreateDefaultSubobject<UGravityControllerComponent>(TEXT("Gravity Controller"));
 
 	DamageComponent = CreateDefaultSubobject<UDamageComponent>(TEXT("Damage Component"));
@@ -128,12 +135,12 @@ void ASoldierCharacter::AddNewWeapon(const EWeaponId& Id)
 {
 	AWeaponFactory* WeaponFactory{ AWeaponFactory::GetInstance() };
 	if (WeaponFactory == nullptr) return;
-
-	UWeaponComponent* NewWeapon{ WeaponFactory->CreateWeapon(Id, FPCamera) };
+	
+	UWeaponComponent* NewWeapon{ WeaponFactory->CreateWeapon(Id, GetMesh(), FPMesh) };
 	if (NewWeapon == nullptr) return; 
 	
-	NewWeapon->SetRelativeLocation(FVector(0, 30, -20));
-	NewWeapon->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0, 0, -90)));
+	NewWeapon->bOwnerNoSee = true;
+	NewWeapon->GetMirroredMesh()->bOnlyOwnerSee = true;
 
 	SaveWeaponComponent(NewWeapon);
 

@@ -30,16 +30,32 @@ void AWeaponFactory::BeginPlay()
 }
 
 	
-UWeaponComponent* AWeaponFactory::CreateWeapon(const EWeaponId& Id, USceneComponent* NewWeaponParent) const
+UWeaponComponent* AWeaponFactory::CreateWeapon(const EWeaponId& Id, USceneComponent* ThirdPersonParent, USceneComponent* FirstPersonParent) const
 {
-	if (!Weapons.Contains(Id) || NewWeaponParent == nullptr) return nullptr;
+	if (!Weapons.Contains(Id) || ThirdPersonParent == nullptr) return nullptr;
 
 	TSubclassOf<UWeaponComponent> WeaponClass{ Weapons[Id] };
 	if (WeaponClass == nullptr) return nullptr;
 
-	UWeaponComponent* NewWeapon{ NewObject<UWeaponComponent>(NewWeaponParent->GetOwner(), WeaponClass) };
-	NewWeapon->SetupAttachment(NewWeaponParent);
+	UWeaponComponent* NewWeapon{ NewObject<UWeaponComponent>(ThirdPersonParent->GetOwner(), WeaponClass) };
+	NewWeapon->SetupAttachment(ThirdPersonParent, FName(TEXT("weapon_grip")));
 	NewWeapon->RegisterComponent();
+
+	NewWeapon->SetOwnerNoSee(true);
+	NewWeapon->SetCastShadow(true);
+
+
+	if (FirstPersonParent) {
+		USkeletalMeshComponent* MirroredMesh{ NewObject<USkeletalMeshComponent>(FirstPersonParent->GetOwner()) };
+		MirroredMesh->SetupAttachment(FirstPersonParent, FName(TEXT("weapon_grip")));
+		MirroredMesh->RegisterComponent();
+		FirstPersonParent->GetOwner()->AddInstanceComponent(MirroredMesh);
+
+		NewWeapon->RegisterMirroredMesh(MirroredMesh);
+
+		MirroredMesh->SetOnlyOwnerSee(true);
+		MirroredMesh->SetCastShadow(false);
+	}
 	
 	return NewWeapon;
 }

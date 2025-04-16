@@ -130,6 +130,8 @@ public:
 
 	void SetRaycasterObject(USceneComponent* NewRaycaster);
 
+	void SetVisibility(bool NewVisibility);
+
 	EWeaponCategory GetCategory() const { return Category; }
 	int32 GetLoadedAmmo() const { return LoadedAmmo; }
 	int32 GetMagazineCapacity() const { return MagazineCapacity; }

@@ -132,6 +132,13 @@ void UWeaponComponent::SetRaycasterObject(USceneComponent* NewRaycaster)
 	RaycasterObject = NewRaycaster;
 }
 
+void UWeaponComponent::SetVisibility(bool NewVisibility)
+{
+	USceneComponent::SetVisibility(NewVisibility);
+	if (MirroredMesh)
+		MirroredMesh->SetVisibility(NewVisibility);
+}
+
 void UWeaponComponent::StartFiring()
 {
 }

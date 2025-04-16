@@ -39,8 +39,12 @@ protected:
 
 	// Skeletal mesh used to represent the weapon in another perspective.
 	// This mesh must stay visually synchronized with the primary mesh of this UWeaponComponent.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "General")
 	TObjectPtr<USkeletalMeshComponent> MirroredMesh;
+
+	// Reference to the component that defines the origin point for firing raycasts.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "General")
+	USceneComponent* RaycasterObject;
 
 
 	// Base damage dealt by each projectile when within effective range.
@@ -123,6 +127,8 @@ public:
 	virtual void StopFiring();
 	virtual void ReloadAmmo();
 	virtual void UpdateFireRate(float Time);
+
+	void SetRaycasterObject(USceneComponent* NewRaycaster);
 
 	EWeaponCategory GetCategory() const { return Category; }
 	int32 GetLoadedAmmo() const { return LoadedAmmo; }

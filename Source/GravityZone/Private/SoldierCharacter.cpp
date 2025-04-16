@@ -139,6 +139,7 @@ void ASoldierCharacter::AddNewWeapon(const EWeaponId& Id)
 	UWeaponComponent* NewWeapon{ WeaponFactory->CreateWeapon(Id, GetMesh(), FPMesh) };
 	if (NewWeapon == nullptr) return; 
 	
+	NewWeapon->SetRaycasterObject(FPCamera);
 	NewWeapon->bOwnerNoSee = true;
 	NewWeapon->GetMirroredMesh()->bOnlyOwnerSee = true;
 

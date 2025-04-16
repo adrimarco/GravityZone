@@ -54,6 +54,8 @@ void UWeaponComponent::RegisterMirroredMesh(USkeletalMeshComponent* NewMirroredM
 
 void UWeaponComponent::ShotBullet()
 {
+	check(RaycasterObject);
+
 	if (LastShotTimer < FireRate) return;
 
 	if (LoadedAmmo <= 0) {
@@ -62,8 +64,8 @@ void UWeaponComponent::ShotBullet()
 	}
 
 	// Raycast trace to detect actors hit by the shot
-	FVector ShotInitialLocation{ GetAttachParent()->GetComponentLocation() };
-	FVector ShotRayEndLocation{ ShotInitialLocation + GetAttachParent()->GetForwardVector() * 20000 };
+	FVector ShotInitialLocation{ RaycasterObject->GetComponentLocation()};
+	FVector ShotRayEndLocation{ ShotInitialLocation + RaycasterObject->GetForwardVector() * 20000 };
 	FVector ImpactLocation;
 
 	if (AActor* HitActor = GetActorHitByShot(ShotInitialLocation, ShotRayEndLocation, ImpactLocation)) {
@@ -74,7 +76,7 @@ void UWeaponComponent::ShotBullet()
 	}
 
 	// Particle effects
-	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(ShotInitialLocation, ImpactLocation, GetAttachParent()->GetComponentRotation());
+	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(ShotInitialLocation, ImpactLocation, RaycasterObject->GetComponentRotation());
 
 	LoadedAmmo--;
 	LastShotTimer = 0;
@@ -123,6 +125,11 @@ void UWeaponComponent::UpdateFireRate(float Time)
 {
 	if (LastShotTimer < FireRate)
 		LastShotTimer += Time;
+}
+
+void UWeaponComponent::SetRaycasterObject(USceneComponent* NewRaycaster)
+{
+	RaycasterObject = NewRaycaster;
 }
 
 void UWeaponComponent::StartFiring()

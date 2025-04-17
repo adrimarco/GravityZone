@@ -7,6 +7,7 @@
 #include "WeaponComponent.generated.h"
 
 class Texture2d;
+class UWeaponAnimationData;
 
 UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLoadedAmmoChangeDelegate, int32, LoadedAmmo);
@@ -36,6 +37,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "General")
 	EWeaponCategory Category;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
+	TObjectPtr<UWeaponAnimationData> AnimationCollection;
 
 	// Skeletal mesh used to represent the weapon in another perspective.
 	// This mesh must stay visually synchronized with the primary mesh of this UWeaponComponent.
@@ -137,4 +141,5 @@ public:
 	int32 GetMagazineCapacity() const { return MagazineCapacity; }
 	int32 GetReserveAmmo() const { return ReserveAmmo; }
 	USkeletalMeshComponent* GetMirroredMesh() const { return MirroredMesh.Get(); }
+	UWeaponAnimationData* GetAnimations() const { return AnimationCollection; }
 };

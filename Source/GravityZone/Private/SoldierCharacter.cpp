@@ -146,8 +146,7 @@ void ASoldierCharacter::AddNewWeapon(const EWeaponId& Id)
 	SaveWeaponComponent(NewWeapon);
 
 	if (EquipedWeapon == nullptr) {
-		EquipedWeapon = NewWeapon;
-		OnWeaponEquiped.Broadcast(EquipedWeapon);
+		EquipWeapon(NewWeapon);
 	}
 	else {
 		NewWeapon->SetVisibility(false);
@@ -202,14 +201,22 @@ void ASoldierCharacter::ChangeEquipedWeapon()
 {
 	UWeaponComponent* NewEquipedWeapon{ EquipedWeapon == MainWeapon ? SecondaryWeapon : MainWeapon };
 
-	if (NewEquipedWeapon) {
+	if (NewEquipedWeapon)
+		EquipWeapon(NewEquipedWeapon);
+}
+
+void ASoldierCharacter::EquipWeapon(UWeaponComponent* NewWeapon)
+{
+	if (EquipedWeapon) {
 		EquipedWeapon->SetVisibility(false);
-
-		EquipedWeapon = NewEquipedWeapon;
-		EquipedWeapon->SetVisibility(true);
-
-		OnWeaponEquiped.Broadcast(NewEquipedWeapon);
 	}
+
+	EquipedWeapon = NewWeapon;
+	if (EquipedWeapon) {
+		EquipedWeapon->SetVisibility(true);
+	}
+
+	OnWeaponEquiped.Broadcast(EquipedWeapon);
 }
 
 void ASoldierCharacter::Die()

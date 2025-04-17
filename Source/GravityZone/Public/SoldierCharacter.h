@@ -115,6 +115,8 @@ protected:
 	void ReloadWeapon();
 	void ChangeEquipedWeapon();
 
+	void EquipWeapon(UWeaponComponent* NewWeapon);
+
 	UFUNCTION(BlueprintCallable)
 	void Die();
 

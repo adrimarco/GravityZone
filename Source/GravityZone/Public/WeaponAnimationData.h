@@ -13,13 +13,13 @@ class GRAVITYZONE_API UWeaponAnimationData : public UDataAsset
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequence* Idle;
+	UAnimMontage* Idle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequence* Aim;
+	UAnimMontage* Aim;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UAnimSequence* Run;
+	UAnimMontage* Run;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* Equip;

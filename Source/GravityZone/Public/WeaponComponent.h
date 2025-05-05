@@ -142,4 +142,5 @@ public:
 	int32 GetReserveAmmo() const { return ReserveAmmo; }
 	USkeletalMeshComponent* GetMirroredMesh() const { return MirroredMesh.Get(); }
 	UWeaponAnimationData* GetAnimations() const { return AnimationCollection; }
+	FVector GetMuzzlePosition() const;
 };

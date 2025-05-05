@@ -4,6 +4,7 @@
 #include "WeaponComponent.h"
 #include "ParticlesProviderSubsystem.h"
 #include "DamageComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -76,7 +77,7 @@ void UWeaponComponent::ShotBullet()
 	}
 
 	// Particle effects
-	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(ShotInitialLocation, ImpactLocation, RaycasterObject->GetComponentRotation());
+	GetWorld()->GetSubsystem<UParticlesProviderSubsystem>()->SpawnShotParticles(GetMuzzlePosition(), ImpactLocation, RaycasterObject->GetComponentRotation());
 
 	LoadedAmmo--;
 	LastShotTimer = 0;
@@ -137,6 +138,19 @@ void UWeaponComponent::SetVisibility(bool NewVisibility)
 	USceneComponent::SetVisibility(NewVisibility);
 	if (MirroredMesh)
 		MirroredMesh->SetVisibility(NewVisibility);
+}
+
+FVector UWeaponComponent::GetMuzzlePosition() const
+{
+	APawn* Pawn{ Cast<APawn>(GetOwner()) };
+
+	// If player isn't weapon owner, use original mesh muzzle
+	if (!Pawn || Pawn->GetController() != UGameplayStatics::GetPlayerController(GetWorld(), 0)) {
+		return GetSocketLocation("muzzle");
+	}
+
+	// Use mirrored mesh (first-person) muzzle
+	return MirroredMesh->GetSocketLocation("muzzle");;
 }
 
 void UWeaponComponent::StartFiring()

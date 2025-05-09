@@ -14,6 +14,7 @@ class UDamageComponent;
 class UWeaponComponent;
 class URespawnable;
 class UAbilitySystemComponent;
+class USoldierAttributes;
 struct FInputActionValue;
 enum class EWeaponId : uint8;
 
@@ -54,6 +55,9 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	UAbilitySystemComponent* AbilitySystem{ nullptr };
+
+	UPROPERTY()
+	const USoldierAttributes* Attributes{};
 
 public:
 	// Notifies when a new weapon is equiped.

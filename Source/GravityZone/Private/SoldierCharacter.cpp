@@ -15,6 +15,7 @@
 #include "WeaponFactory.h"
 #include "SoldierPlayerState.h"
 #include "AbilitySystemComponent.h"
+#include "SoldierAttributes.h"
 
 // Sets default values
 ASoldierCharacter::ASoldierCharacter()
@@ -56,6 +57,7 @@ void ASoldierCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlay
 		check(AbilitySystem);
 
 		AbilitySystem->InitAbilityActorInfo(PState, this);
+		Attributes = AbilitySystem->GetSet<USoldierAttributes>();
 	}
 }
 

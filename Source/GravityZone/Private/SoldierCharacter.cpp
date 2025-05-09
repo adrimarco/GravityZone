@@ -13,6 +13,8 @@
 #include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "WeaponFactory.h"
+#include "SoldierPlayerState.h"
+#include "AbilitySystemComponent.h"
 
 // Sets default values
 ASoldierCharacter::ASoldierCharacter()
@@ -43,6 +45,18 @@ void ASoldierCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	RespawnComponent->OnRespawn.AddDynamic(this, &ASoldierCharacter::Spawn);
+}
+
+void ASoldierCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)
+{
+	// Caches ability system component
+	ASoldierPlayerState* PState{ Cast<ASoldierPlayerState>(NewPlayerState) };
+	if (PState) {
+		AbilitySystem = PState ? PState->GetAbilitySystemComponent() : nullptr;
+		check(AbilitySystem);
+
+		AbilitySystem->InitAbilityActorInfo(PState, this);
+	}
 }
 
 float ASoldierCharacter::GetPitchOffsetClampedToCameraLimit(float AddedPitch) const

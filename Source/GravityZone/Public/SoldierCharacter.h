@@ -13,6 +13,7 @@ class UGravityControllerComponent;
 class UDamageComponent;
 class UWeaponComponent;
 class URespawnable;
+class UAbilitySystemComponent;
 struct FInputActionValue;
 enum class EWeaponId : uint8;
 
@@ -50,6 +51,9 @@ class GRAVITYZONE_API ASoldierCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* MeleeWeapon{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
+	UAbilitySystemComponent* AbilitySystem{ nullptr };
 
 public:
 	// Notifies when a new weapon is equiped.
@@ -100,6 +104,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState) override;
 
 	void Move(const FInputActionValue& Value);
 

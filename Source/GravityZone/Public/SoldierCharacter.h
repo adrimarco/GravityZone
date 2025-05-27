@@ -15,6 +15,9 @@ class UWeaponComponent;
 class URespawnable;
 class UAbilitySystemComponent;
 class USoldierAttributes;
+class ASoldierPlayerState;
+class UGameplayAbility;
+struct FOnAttributeChangeData;
 struct FInputActionValue;
 enum class EWeaponId : uint8;
 
@@ -65,14 +68,25 @@ public:
 	FWeaponEquipedDelegate OnWeaponEquiped;
 
 	/*
+	** Abilities
+	*/
+	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
+	TSubclassOf<UGameplayAbility> InitAttributesAbility;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
+	TSubclassOf<UGameplayAbility> SprintAbility;
+
+	/*
 	** Input Actions
 	*/
-
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* InputMap{ nullptr };
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction{ nullptr };
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* JumpAction{ nullptr };
@@ -114,6 +128,9 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 
+	void StartSprint(const FInputActionValue& Value);
+	void StopSprint(const FInputActionValue& Value);
+
 	// Takes a float representing the pitch offset to be applied to the camera's rotation.
 	// Returns the adjusted value needed to avoid exceeding the camera rotation limits.
 	// If the AddedPitch does not exceed the defined limits, the original value is returned.
@@ -147,6 +164,12 @@ public:
 	// As soldier can hold one weapon of each type, if another weapon with the same 
 	// category exists, it is destroyed.
 	void SaveWeaponComponent(UWeaponComponent* NewWeapon);
+
+	void UpdateMovementSpeed(float NewWalkSpeed);
+
+	// Provided the ASoldierPlayerState of the character, binds to its Gameplay Ability System
+	// and initialize its values and delegates.
+	void BindAbilitySystem(ASoldierPlayerState* PState);
 	
 	// Returns character's attached camera.
 	UCameraComponent* GetCamera() const { return FPCamera; }

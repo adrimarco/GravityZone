@@ -52,13 +52,28 @@ void ASoldierCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlay
 {
 	// Caches ability system component
 	ASoldierPlayerState* PState{ Cast<ASoldierPlayerState>(NewPlayerState) };
-	if (PState) {
-		AbilitySystem = PState ? PState->GetAbilitySystemComponent() : nullptr;
-		check(AbilitySystem);
+	if (PState)
+		BindAbilitySystem(PState);
+}
 
-		AbilitySystem->InitAbilityActorInfo(PState, this);
-		Attributes = AbilitySystem->GetSet<USoldierAttributes>();
-	}
+void ASoldierCharacter::BindAbilitySystem(ASoldierPlayerState* PState)
+{
+	AbilitySystem = PState->GetAbilitySystemComponent();
+	check(AbilitySystem);
+
+	// Inits system and binds functions
+	AbilitySystem->InitAbilityActorInfo(PState, this);
+	Attributes = AbilitySystem->GetSet<USoldierAttributes>();
+	AbilitySystem->GetGameplayAttributeValueChangeDelegate(Attributes->GetMovementSpeedAttribute()
+	).AddLambda([this](const FOnAttributeChangeData & Data) {
+		UpdateMovementSpeed(Data.NewValue);
+	});
+
+	// Updates character with initial attributes values
+	UpdateMovementSpeed(Attributes->GetMovementSpeed());
+
+	// Gives soldier base abilities
+	AbilitySystem->GiveAbility(SprintAbility);
 }
 
 float ASoldierCharacter::GetPitchOffsetClampedToCameraLimit(float AddedPitch) const
@@ -103,6 +118,18 @@ void ASoldierCharacter::Look(const FInputActionValue& Value)
 	FPCamera->AddLocalRotation(FRotator{ GetPitchOffsetClampedToCameraLimit(LookAxisVector.Y), 0, 0 });
 }
 
+void ASoldierCharacter::StartSprint(const FInputActionValue& Value)
+{
+	AbilitySystem->TryActivateAbilityByClass(SprintAbility);
+}
+
+void ASoldierCharacter::StopSprint(const FInputActionValue& Value)
+{
+	FGameplayAbilitySpec* Spec{ AbilitySystem->FindAbilitySpecFromClass(SprintAbility) };
+	if (Spec)
+		AbilitySystem->CancelAbility(Spec->Ability);
+}
+
 // Called to bind functionality to input
 void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -124,6 +151,10 @@ void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 			// Moving
 			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::Move);
+
+			// Sprinting
+			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASoldierCharacter::StartSprint);
+			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASoldierCharacter::StopSprint);
 
 			// Looking
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::Look);
@@ -193,6 +224,11 @@ void ASoldierCharacter::SaveWeaponComponent(UWeaponComponent* NewWeapon)
 	}
 
 	*StoredWeaponPointer = NewWeapon;
+}
+
+void ASoldierCharacter::UpdateMovementSpeed(float NewWalkSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewWalkSpeed;
 }
 
 void ASoldierCharacter::FireWeapon()

@@ -35,4 +35,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health")
 	FGameplayAttributeData Damage;
 	ATTRIBUTE_ACCESSORS(USoldierAttributes, Damage);
+
+	USoldierAttributes();
+
+	virtual bool PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data) override;
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 };

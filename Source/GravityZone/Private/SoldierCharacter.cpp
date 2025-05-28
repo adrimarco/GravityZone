@@ -74,6 +74,7 @@ void ASoldierCharacter::BindAbilitySystem(ASoldierPlayerState* PState)
 
 	// Gives soldier base abilities
 	AbilitySystem->GiveAbility(SprintAbility);
+	AbilitySystem->GiveAbility(CrouchAbility);
 }
 
 float ASoldierCharacter::GetPitchOffsetClampedToCameraLimit(float AddedPitch) const
@@ -120,12 +121,26 @@ void ASoldierCharacter::Look(const FInputActionValue& Value)
 
 void ASoldierCharacter::StartSprint(const FInputActionValue& Value)
 {
+	check(SprintAbility);
 	AbilitySystem->TryActivateAbilityByClass(SprintAbility);
 }
 
 void ASoldierCharacter::StopSprint(const FInputActionValue& Value)
 {
 	FGameplayAbilitySpec* Spec{ AbilitySystem->FindAbilitySpecFromClass(SprintAbility) };
+	if (Spec)
+		AbilitySystem->CancelAbility(Spec->Ability);
+}
+
+void ASoldierCharacter::StartCrouch(const FInputActionValue& Value)
+{
+	check(CrouchAbility);
+	AbilitySystem->TryActivateAbilityByClass(CrouchAbility);
+}
+
+void ASoldierCharacter::StopCrouch(const FInputActionValue& Value)
+{
+	FGameplayAbilitySpec* Spec{ AbilitySystem->FindAbilitySpecFromClass(CrouchAbility) };
 	if (Spec)
 		AbilitySystem->CancelAbility(Spec->Ability);
 }
@@ -155,6 +170,10 @@ void ASoldierCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			// Sprinting
 			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASoldierCharacter::StartSprint);
 			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASoldierCharacter::StopSprint);
+
+			// Crouching
+			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ASoldierCharacter::StartCrouch);
+			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ASoldierCharacter::StopCrouch);
 
 			// Looking
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASoldierCharacter::Look);

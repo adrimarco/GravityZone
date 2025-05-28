@@ -71,10 +71,13 @@ public:
 	** Abilities
 	*/
 	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
-	TSubclassOf<UGameplayAbility> InitAttributesAbility;
+	TSubclassOf<UGameplayAbility> SprintAbility;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
-	TSubclassOf<UGameplayAbility> SprintAbility;
+	TSubclassOf<UGameplayAbility> CrouchAbility;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Abilities")
+	TSubclassOf<UGameplayAbility> SlideAbility;
 
 	/*
 	** Input Actions
@@ -87,6 +90,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction{ nullptr };
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* CrouchAction{ nullptr };
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* JumpAction{ nullptr };
@@ -128,8 +134,13 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 
+	// Updates walking speed
 	void StartSprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
+
+	// Activates crouching mode
+	void StartCrouch(const FInputActionValue& Value);
+	void StopCrouch(const FInputActionValue& Value);
 
 	// Takes a float representing the pitch offset to be applied to the camera's rotation.
 	// Returns the adjusted value needed to avoid exceeding the camera rotation limits.
